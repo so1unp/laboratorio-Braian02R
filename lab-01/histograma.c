@@ -11,18 +11,18 @@ int main(int argc, char *argv[])
     printf("Ingrese el texto (Ctrl+D para finalizar):\n");
 
     int c;
-    int current_length = 0;
+    int longitud_actual = 0;
     while ((c = getchar()) != EOF) {
         if (isalpha(c)) {
             // si el caracter es una letra, incrementa la longitud de la palabra actual
-            current_length++;
-        } else if (current_length > 0) {
+            longitud_actual++;
+        } else if (longitud_actual > 0) {
             // Si el carácter no es una letra y tenemos una longitud de palabra distinta de cero,
             // actualiza la entrada del histograma correspondiente
-            if (current_length <= MAX_WORD_LENGTH) {
-                word_lengths[current_length]++;
+            if (longitud_actual <= MAX_WORD_LENGTH) {
+                word_lengths[longitud_actual]++;
             }
-            current_length = 0; // Restablece la longitud de la palabra
+            longitud_actual = 0; // Restablece la longitud de la palabra
         }
     }
 
