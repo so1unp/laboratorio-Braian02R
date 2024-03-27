@@ -66,14 +66,24 @@ void runcmd(struct cmd *cmd)
             ecmd = (struct execcmd *) cmd;
             if (ecmd->argv[0] == 0)
                 exit(0);
-            fprintf(stderr, "exec not implemented\n");
+            //fprintf(stderr, "exec not implemented\n");
             // Your code here ...
+            //exec
+            //printf("%s\n", ecmd->argv[0]);
+            //printf("%s\n", ecmd->argv[1]);
+
+            execvp(ecmd->argv[0], ecmd->argv);
+            perror("no existe el ejecutable");
             break;
 
         case REDIR:
-            fprintf(stderr, "redir not implemented\n");
+            //fprintf(stderr, "redir not implemented\n");
             // Your code here ...
             rcmd = (struct redircmd *) cmd;
+            
+            close(rcmd->fd);
+            //0644: octal(permisos) rwx-rwx-rwx->rwx-r-r
+            open(rcmd->file, rcmd->mode, 0644);
             runcmd(rcmd->cmd);
             break;
 
