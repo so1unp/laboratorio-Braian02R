@@ -71,7 +71,6 @@ void runcmd(struct cmd *cmd)
             //exec
             //printf("%s\n", ecmd->argv[0]);
             //printf("%s\n", ecmd->argv[1]);
-
             execvp(ecmd->argv[0], ecmd->argv);
             perror("no existe el ejecutable");
             break;
@@ -82,8 +81,8 @@ void runcmd(struct cmd *cmd)
             rcmd = (struct redircmd *) cmd;
             
             close(rcmd->fd);
-            //0644: octal(permisos) rwx-rwx-rwx->rwx-r-r
-            open(rcmd->file, rcmd->mode, 0644);
+            open(rcmd->file, rcmd->mode, 0644);//0644: octal(permisos) rwx-rwx-rwx->rwx-r-r
+
             runcmd(rcmd->cmd);
             break;
 
