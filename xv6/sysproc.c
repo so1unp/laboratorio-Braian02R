@@ -100,3 +100,9 @@ sys_trace(void)
     return 0;
 }
 
+int //x
+sys_answer(void)
+{
+  return 42;
+}
+
