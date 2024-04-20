@@ -105,6 +105,8 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_trace(void);
 extern int sys_answer(void); //x
+extern int sys_getppid(void); //y
+//extern int sys_pscnt(void); //y
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,7 +131,9 @@ static int (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_trace]   sys_trace,
-[SYS_answer]  sys_answer//x
+[SYS_answer]  sys_answer,//x
+[SYS_getppid]  sys_getppid,//y
+//[SYS_pscnt] sys_pscnt //
 };
 
 extern int trace;
@@ -157,7 +161,9 @@ static char* syscalls_names[] = {
 [SYS_mkdir]   "sys_mkdir",
 [SYS_close]   "sys_close",
 [SYS_trace]   "sys_trace",
-[SYS_answer]  "sys_answer" //x
+[SYS_answer]  "sys_answer", //x
+[SYS_getppid] "sys_getppid", //y
+//[SYS_pscnt] "sys_pscnt" //
 };
 
 void

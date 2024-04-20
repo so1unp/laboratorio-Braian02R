@@ -8,6 +8,7 @@
 #include "proc.h"
 
 int trace;
+int proc;
 
 int
 sys_fork(void)
@@ -106,3 +107,25 @@ sys_answer(void)
   return 42;
 }
 
+int //y
+sys_getppid (void)
+{
+  return myproc()->parent->pid;
+}
+
+// int
+// sys_pscnt(void)
+// {
+//   int count = 0;
+//   struct proc *p ;
+
+//   // Recorre todos los procesos en la tabla de procesos
+//   for (p = (struct proc *)proc; p != NULL; p = p->next) {
+//     // Verifica si el proceso no es un zombie (proceso muerto)
+    
+//       count++;
+    
+//   }
+
+//   return count;
+// }
