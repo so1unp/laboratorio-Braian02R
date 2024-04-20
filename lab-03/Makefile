@@ -2,7 +2,7 @@ CC=gcc
 BIN=./bin
 CFLAGS=-g -Wall -Wextra -Wshadow -Wconversion -Wunreachable-code
 
-PROG=sig_receiver forkprio sh
+PROG=sig_receiver forkprio sh sig_sender 
 
 LIST=$(addprefix $(BIN)/, $(PROG))
 
