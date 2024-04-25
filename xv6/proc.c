@@ -532,3 +532,20 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int
+sys_pscnt(void)
+{
+  int count = 0;
+  struct proc *p;
+
+  // Recorre la tabla de procesos y cuenta los procesos en estado RUNNABLE, SLEEPING o ZOMBIE
+  //acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->state != UNUSED)
+      count++;
+  }
+  //release(&ptable.lock);
+
+  return count;
+}

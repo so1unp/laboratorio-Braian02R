@@ -23,4 +23,4 @@
 #define SYS_trace  22
 #define SYS_answer 23 //x
 #define SYS_getppid 24 // y
-//#define SYS_pscnt 25 // 
+#define SYS_pscnt 25 // 

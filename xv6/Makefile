@@ -193,6 +193,7 @@ UPROGS=\
 	_trace\
 	_getpid\
 	_getppid\
+	_pscnt\
 	
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
