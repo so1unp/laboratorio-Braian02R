@@ -5,16 +5,18 @@
 // Variable global que incrementan los hilos.
 static long glob = 0;
 
-void increment_glob(int loops)
+void *increment_glob(void *loops)
 {
+    int num_loops = *((int *)loops);
     int loc, j;
 
     // incrementa glob
-    for (j = 0; j < loops; j++) {
+    for (j = 0; j < num_loops; j++) {
         loc = glob;
         loc++;
         glob = loc;
     }
+    pthread_exit(NULL);
 }
 
 int main(int argc, char *argv[])
@@ -35,7 +37,16 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    printf("%ld\n", glob);
+    pthread_t thread1, thread2;
+    pthread_create(&thread1, NULL, increment_glob, &loops);
+    pthread_create(&thread2, NULL, increment_glob, &loops);
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
+    //printf("%ld\n", glob);
+
+    printf("Valor final de glob: %ld\n", glob);
 
     exit(EXIT_SUCCESS);
 }

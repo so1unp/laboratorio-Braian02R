@@ -73,13 +73,33 @@ void test_fork(int count)
 //==========================================================================
 // Código para la prueba con pthread_create()
 //==========================================================================
+void *thread_exit(void *threadId) {
+    //long tid = (long)threadId;
+    //printf("Hola desde el hilo %ld\n", tid);
+    pthread_exit(NULL);
+}
 
-void test_thread(int count) 
-{
-    int j;
-    
-    for (j = 0; j < count; j++) {
-        // COMPLETAR: CREAR UN HILO
-        // COMPLETAR: ESPERAR POR HILO RECIEN CREADO
+void test_thread(int count) {
+    int rc;
+    pthread_t threads[count];
+
+    long t;
+    for (t = 0; t < count; t++) {
+        //printf("En main: creando hilo %ld\n", t);
+        rc = pthread_create(&threads[t], NULL, thread_exit, (void *)t);
+        if (rc) {
+            printf("ERROR; código de retorno de pthread_create() es %d\n", rc);
+            exit(-1);
+        }
+    }
+
+    // Esperar a que los hilos terminen
+    long k;
+    for (k = 0; k < count; k++) {
+        rc = pthread_join(threads[t], NULL);
+        if (rc) {
+            printf("ERROR; código de retorno de pthread_join() es %d\n", rc);
+            exit(-1);
+        }
     }
 }
