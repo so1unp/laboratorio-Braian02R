@@ -1,0 +1,15 @@
+1. hecho
+
+2. ¿Por qué basta con ejecutar popa para continuar con la ejecución de next_thread?
+
+porque como se restaura todo lo que esta en la pila en la cpu, donde tenemos ahi el contador de programa y entonces cuando hacemos el return
+lo que hace es continuar ejecutando ese contador del programa, es decir que el contador de programa (PC) guardado del nuevo hilo se carga al final, permitiendo que el nuevo hilo 
+reanude la ejecución desde donde la dejó.
+
+3. Podria ser round robin o fifo pero mezcla un poco de ambas(se considera cooperativo) lo importante es que es no apropiativo ya que 
+los hilos no pueden ser interrumpidos por el planificador mientras se están ejecutando. Deben ceder el control explícitamente usando 
+thread_yield para que otro hilo tenga la oportunidad de ejecutarse.
+
+4. hecho
+
+5. hecho
