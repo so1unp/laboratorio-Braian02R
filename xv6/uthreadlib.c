@@ -9,6 +9,8 @@
 #define STACK_SIZE  8192
 #define MAX_THREAD  8
 
+static int ultimo_indice = 0;
+
 struct thread {
   int  sp;                /* saved stack pointer */
   char stack[STACK_SIZE]; /* the thread's stack */
@@ -38,24 +40,30 @@ thread_init(void)
 }
 
 void 
-thread_schedule(void)
+thread_schedule(void) // modificar
 {
   thread_p t;
 
-  /* Find another runnable thread. */
   next_thread = 0;
-  for (t = all_thread; t < all_thread + MAX_THREAD; t++) {
+  
+  int i, indice_actual;
+  for(i = 1; i < MAX_THREAD; i++){
+    indice_actual= (ultimo_indice + i) % MAX_THREAD;
+    t = &all_thread[indice_actual];
     if (t->state == RUNNABLE && t != current_thread) {
       next_thread = t;
+      ultimo_indice = indice_actual;
       break;
     }
   }
 
-  if (t >= all_thread + MAX_THREAD && current_thread->state == RUNNABLE) {
-    /* The current thread is the only runnable thread; run it. */
-    next_thread = current_thread;
+  if (next_thread == 0) {
+    // If no threads are runnable, resume the main thread
+    next_thread = &all_thread[0];  // Point to the main thread
+    if (next_thread->state != RUNNING) {
+      next_thread->state = RUNNING;
+    }
   }
-
   if (next_thread == 0) {
     printf(2, "thread_schedule: no runnable threads\n");
     exit();
