@@ -10,13 +10,15 @@ void my_handler(int sig){
 
 int main(void)
 {
-    int i = 1;
-    for(i; i < 65; i++){
+    int i;
+    for(i = 0; i < 65; i++){
         signal(i, my_handler);
     }
     //signal(15, my_handler);
 
-    printf("%d\n",getpid());
+    int pid = getpid();
+
+    printf("%d\n", pid);
 
     printf("esperando señales...");
 
