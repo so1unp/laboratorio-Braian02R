@@ -10,12 +10,12 @@
 #include <math.h>
 #include <semaphore.h>
 
-static void* producer(void*);
-static void* consumer(void*);
-
 struct buffer {
     int size;
     int* buf;
+    sem_t empty; // Semáforo que controla los espacios vacíos en el buffer
+    sem_t full;  // Semáforo que controla los espacios ocupados en el buffer
+    pthread_mutex_t mutex; // Mutex para proteger el acceso al buffer
 };
 
 struct params {
@@ -23,7 +23,10 @@ struct params {
     int wait_cons;
     int items;
     struct buffer* buf;
-} params_t;
+};
+
+static void* producer(void*);
+static void* consumer(void*);
 
 /* Productor */
 static void* producer(void *p)
@@ -33,8 +36,11 @@ static void* producer(void *p)
     struct params *params = (struct params*) p;
 
     for (i = 0; i < params->items; i++) {
+        sem_wait(&params->buf->empty); // Espera hasta que haya espacio vacío en el buffer
+        pthread_mutex_lock(&params->buf->mutex); // Bloquea el mutex antes de acceder al buffer
         params->buf->buf[i % params->buf->size] = i;
-        // Espera una cantidad aleatoria de microsegundos.
+        pthread_mutex_unlock(&params->buf->mutex); // Desbloquea el mutex después de acceder al buffer
+        sem_post(&params->buf->full); // Incrementa el contador de espacios ocupados en el buffer
         usleep(rand() % params->wait_prod);
     }
 
@@ -52,9 +58,12 @@ static void* consumer(void *p)
     int *reader_results = (int*) malloc(sizeof(int)*params->items);
 
     for (i = 0; i < params->items; i++) {
+        sem_wait(&params->buf->full); // Espera hasta que haya elementos para consumir en el buffer
+        pthread_mutex_lock(&params->buf->mutex); // Bloquea el mutex antes de acceder al buffer
         reader_results[i] = params->buf->buf[i % params->buf->size];
-        // Espera una cantidad aleatoria de microsegundos.
-        usleep(rand() % params->wait_prod);
+        pthread_mutex_unlock(&params->buf->mutex); // Desbloquea el mutex después de acceder al buffer
+        sem_post(&params->buf->empty); // Incrementa el contador de espacios vacíos en el buffer
+        usleep(rand() % params->wait_cons);
     }
 
     // Imprime lo que leyo
@@ -101,6 +110,11 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
+    // Inicializa semáforos y mutex
+    sem_init(&buf->empty, 0, buf->size); // Inicialmente, todos los espacios están vacíos
+    sem_init(&buf->full, 0, 0); // Inicialmente, no hay elementos para consumir
+    pthread_mutex_init(&buf->mutex, NULL);
+
     // Instancia una estructura de parámetros
     struct params *params;
     params = (struct params*) malloc(sizeof(struct params));
@@ -137,6 +151,17 @@ int main(int argc, char** argv)
     pthread_create(&producer_t, NULL, producer, params);
     pthread_create(&consumer_t, NULL, consumer, params);
 
-    // Mi trabajo ya esta hecho ...
-    pthread_exit(NULL);
+    // Espera a que los hilos terminen
+    pthread_join(producer_t, NULL);
+    pthread_join(consumer_t, NULL);
+
+    // Libera recursos
+    free(params);
+    free(buf->buf);
+    free(buf);
+    sem_destroy(&buf->empty);
+    sem_destroy(&buf->full);
+    pthread_mutex_destroy(&buf->mutex);
+
+    return 0;
 }
