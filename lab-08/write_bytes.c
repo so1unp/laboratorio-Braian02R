@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     // Esta condicion esta presente para evitar el warning que dice que sync no esta siendo usada.
     // Se puede eliminar cuando se implemente fsync() y fdatasync()
-    sync = sync == 1 ? 0 : 1;
+    //sync = sync == 1 ? 0 : 1;
 
     for (totWritten = 0; totWritten < numBytes; totWritten += thisWrite) {
         thisWrite = numBytes - totWritten > bufSize ? bufSize : numBytes - totWritten;
@@ -44,6 +44,22 @@ int main(int argc, char *argv[])
             perror("write");
             exit(EXIT_FAILURE);
         }
+
+        switch(sync){
+            case 0:
+                break;
+            case 1:
+                fsync(fd);
+                break;
+            case 2:
+                fdatasync(fd);
+                break;
+            default:
+                fprintf(stderr, "Opcion de sincronizacion invalida\n");
+                exit(EXIT_FAILURE);
+                break;
+        }
+    
     }
 
     if (close(fd) == -1) {
